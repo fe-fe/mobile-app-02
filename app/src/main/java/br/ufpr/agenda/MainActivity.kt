@@ -9,14 +9,24 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import br.ufpr.agenda.data.dao.PrioridadeDAO
+import br.ufpr.agenda.data.dao.StatusDAO
 import br.ufpr.agenda.data.dao.TarefaDAO
 import br.ufpr.agenda.data.model.TarefaModel
+import br.ufpr.agenda.data.model.PrioridadeModel
+import br.ufpr.agenda.data.model.StatusModel
 
 class MainActivity : AppCompatActivity() {
     lateinit var listView: ListView
     lateinit var adapter: ArrayAdapter<TarefaModel>
     val lista = mutableListOf<TarefaModel>()
     lateinit var tarefaDAO: TarefaDAO
+    lateinit var prioridadeDAO: PrioridadeDAO
+    lateinit var statusDAO: StatusDAO
+
+    val lista_prioridades = mutableListOf<PrioridadeModel>()
+    val lista_status = mutableListOf<StatusModel>()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +39,21 @@ class MainActivity : AppCompatActivity() {
         }
 
         tarefaDAO = TarefaDAO(this)
+        statusDAO = StatusDAO(this)
+        prioridadeDAO = PrioridadeDAO(this)
+
+        lista_prioridades.addAll(prioridadeDAO.findAll())
+        lista_status.addAll(statusDAO.findAll())
+
+        tarefaDAO.create(
+            br.ufpr.agenda.data.model.TarefaModel(
+                id = 0,
+                titulo = "Tarefa teste",
+                descricao = "Teste banco",
+                id_status = 1,
+                id_prioridade = 1
+            )
+        )
 
         listView = findViewById(R.id.tasksListView)
         adapter = ArrayAdapter(
