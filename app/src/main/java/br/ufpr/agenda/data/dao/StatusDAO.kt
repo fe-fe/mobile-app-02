@@ -9,6 +9,37 @@ class StatusDAO (private val context: Context) {
 
     private val dbHelper = DBHelper(context)
 
+    fun findById(id: Int): StatusModel? {
+        if (id == 0) {
+            return null
+        }
+        val db = dbHelper.readableDatabase
+        val cursor: Cursor = db.query(
+            DBHelper.STATUS_TABLE,
+            null,
+            "id=?",
+            arrayOf(id.toString()),
+            null,
+            null,
+            null
+        )
+
+        var status: StatusModel? = null
+
+        if (cursor.moveToFirst()) {
+            status = StatusModel(
+                id=cursor.getInt(cursor.getColumnIndexOrThrow("id")),
+                peso=cursor.getInt(cursor.getColumnIndexOrThrow("peso")),
+                nome=cursor.getString(cursor.getColumnIndexOrThrow("nome")),
+            )
+        }
+        cursor.close()
+        db.close()
+
+        return status
+    }
+
+
     fun findAll(): List<StatusModel> {
         val db = dbHelper.readableDatabase
         val cursor: Cursor = db.query(
