@@ -33,7 +33,7 @@ class PrioridadeDAO (private val context: Context) {
             )
         }
         cursor.close()
-        db.close()
+        
 
         return prioridade
     }
@@ -60,7 +60,7 @@ class PrioridadeDAO (private val context: Context) {
             prioridadeList.add(prioridade)
         }
         cursor.close()
-        db.close()
+        
         return prioridadeList
     }
 }

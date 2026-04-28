@@ -46,18 +46,10 @@ class MainActivity : AppCompatActivity() {
         statusDAO = StatusDAO(this)
         prioridadeDAO = PrioridadeDAO(this)
 
+        lista_prioridades.add(PrioridadeModel(id = 0, nome = "Todas", peso = 0))
         lista_prioridades.addAll(prioridadeDAO.findAll())
+        lista_status.add(StatusModel(id = 0, nome = "Todos", peso = 0))
         lista_status.addAll(statusDAO.findAll())
-
-        tarefaDAO.create(
-            br.ufpr.agenda.data.model.TarefaModel(
-                id = 0,
-                titulo = "Tarefa teste",
-                descricao = "Teste banco",
-                id_status = 1,
-                id_prioridade = 1
-            )
-        )
 
         listView = findViewById(R.id.tasksListView)
         adapter = ArrayAdapter(
@@ -109,8 +101,8 @@ class MainActivity : AppCompatActivity() {
         val statusInput = findViewById<Spinner>(R.id.statusInput)
 
         val titulo = tituloInput.text.toString().takeIf { it.isNotBlank() }
-        val prioridade = prioridadeInput.selectedItem as? PrioridadeModel
-        val status = statusInput.selectedItem as? StatusModel
+        val prioridade = (prioridadeInput.selectedItem as? PrioridadeModel)?.takeIf { it.id != 0 }
+        val status = (statusInput.selectedItem as? StatusModel)?.takeIf { it.id != 0 }
 
         lista.clear()
         lista.addAll(tarefaDAO.find(

@@ -24,7 +24,7 @@ class TarefaDAO (private val context: Context) {
             put("id_status", tarefa.id_status)
         }
         val id = db.insert(DBHelper.TAREFAS_TABLE, null, values)
-        db.close()
+        
         return id
     }
 
@@ -46,7 +46,7 @@ class TarefaDAO (private val context: Context) {
             "id=?",
             arrayOf(tarefa.id.toString())
         )
-        db.close()
+        
         return rowsAffected
     }
 
@@ -74,7 +74,7 @@ class TarefaDAO (private val context: Context) {
             )
         }
         cursor.close()
-        db.close()
+        
         return tarefa
     }
 
@@ -127,7 +127,7 @@ class TarefaDAO (private val context: Context) {
             tarefaList.add(tarefa)
         }
         cursor.close()
-        db.close()
+        
         return tarefaList
     }
 
@@ -141,7 +141,7 @@ class TarefaDAO (private val context: Context) {
             "id=?",
             arrayOf(id.toString())
         )
-        db.close()
+        
         return rowsDeleted
     }
 }

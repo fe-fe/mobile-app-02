@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper
 class DBHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
     companion object {
         const val DATABASE_NAME = "Agenda.db"
-        const val DATABASE_VERSION = 2
+        const val DATABASE_VERSION = 4
         const val PRIORIDADE_TABLE = "prioridade"
         const val TAREFAS_TABLE = "tarefas"
         const val STATUS_TABLE = "status"
@@ -44,7 +44,7 @@ class DBHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, null,
         val createTarefasTable = """
             CREATE TABLE $TAREFAS_TABLE (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                titulo TEXT,
+                titulo TEXT UNIQUE,
                 descricao TEXT,
                 id_prioridade INTEGER DEFAULT 1,
                 id_status INTEGER DEFAULT 1,
@@ -53,6 +53,21 @@ class DBHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, null,
             )
         """.trimIndent()
         db.execSQL(createTarefasTable)
+
+        db.execSQL("""
+            INSERT INTO $TAREFAS_TABLE (titulo, descricao, id_prioridade, id_status)
+            VALUES ("Trabalho Mobile", "Desenvolver um aplicativo com tema livre", 3, 3)
+        """.trimIndent())
+
+        db.execSQL("""
+            INSERT INTO $TAREFAS_TABLE (titulo, descricao, id_prioridade, id_status)
+            VALUES ("Estudar pra prova", "capitulos 1 e 2", 2, 1)
+        """.trimIndent())
+
+        db.execSQL("""
+            INSERT INTO $TAREFAS_TABLE (titulo, descricao, id_prioridade, id_status)
+            VALUES ("Testar aplicativo", "testar pra ver se ta tudo funcionando", 3, 1)
+        """.trimIndent())
     }
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         db.execSQL("DROP TABLE IF EXISTS $TAREFAS_TABLE")
@@ -65,5 +80,4 @@ class DBHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, null,
         super.onConfigure(db)
         db.setForeignKeyConstraintsEnabled(true)
     }
-
 }

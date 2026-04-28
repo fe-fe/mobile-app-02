@@ -34,7 +34,7 @@ class StatusDAO (private val context: Context) {
             )
         }
         cursor.close()
-        db.close()
+        
 
         return status
     }
@@ -62,7 +62,7 @@ class StatusDAO (private val context: Context) {
             statusList.add(status)
         }
         cursor.close()
-        db.close()
+        
         return statusList
     }
 }
