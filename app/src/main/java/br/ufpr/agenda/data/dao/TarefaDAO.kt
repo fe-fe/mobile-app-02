@@ -46,6 +46,31 @@ class TarefaDAO (private val context: Context) {
         return rowsAffected
     }
 
+    fun findById(id: Int): TarefaModel? {
+        val db = dbHelper.readableDatabase
+        val cursor = db.query(
+            DBHelper.TAREFAS_TABLE,
+            null,
+            "id=?",
+            arrayOf(id.toString()),
+            null, null, null
+        )
+
+        var tarefa: TarefaModel? = null
+        if (cursor.moveToFirst()) {
+            tarefa = TarefaModel(
+                id = cursor.getInt(cursor.getColumnIndexOrThrow("id")),
+                titulo = cursor.getString(cursor.getColumnIndexOrThrow("titulo")),
+                descricao = cursor.getString(cursor.getColumnIndexOrThrow("descricao")),
+                id_status = cursor.getInt(cursor.getColumnIndexOrThrow("id_status")),
+                id_prioridade = cursor.getInt(cursor.getColumnIndexOrThrow("id_prioridade"))
+            )
+        }
+        cursor.close()
+        db.close()
+        return tarefa
+    }
+
     fun find(statusId: Int? = null, prioridadeId: Int? = null, titulo: String? = null): List<TarefaModel> {
         val db = dbHelper.readableDatabase
         val conditions = mutableListOf<String>()
