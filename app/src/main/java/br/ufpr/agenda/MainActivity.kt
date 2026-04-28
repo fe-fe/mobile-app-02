@@ -2,9 +2,13 @@ package br.ufpr.agenda
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ListView
+import android.widget.Spinner
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -76,6 +80,15 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, TarefaActivity::class.java)
             startActivity(intent)
         }
+
+        val prioridadeSpinner = findViewById<Spinner>(R.id.prioridadeInput)
+        val statusSpinner = findViewById<Spinner>(R.id.statusInput)
+
+        prioridadeSpinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, lista_prioridades)
+            .also { it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
+
+        statusSpinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, lista_status)
+            .also { it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
     }
 
     override fun onResume() {
@@ -87,6 +100,24 @@ class MainActivity : AppCompatActivity() {
         lista.clear()
         val tarefas = tarefaDAO.find()
         lista.addAll(tarefas)
+        adapter.notifyDataSetChanged()
+    }
+
+    fun filtrarTarefas(view: View) {
+        val tituloInput = findViewById<EditText>(R.id.tituloInput)
+        val prioridadeInput = findViewById<Spinner>(R.id.prioridadeInput)
+        val statusInput = findViewById<Spinner>(R.id.statusInput)
+
+        val titulo = tituloInput.text.toString().takeIf { it.isNotBlank() }
+        val prioridade = prioridadeInput.selectedItem as? PrioridadeModel
+        val status = statusInput.selectedItem as? StatusModel
+
+        lista.clear()
+        lista.addAll(tarefaDAO.find(
+            titulo = titulo,
+            prioridadeId = prioridade?.id,
+            statusId = status?.id
+        ))
         adapter.notifyDataSetChanged()
     }
 }
