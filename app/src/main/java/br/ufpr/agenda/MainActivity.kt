@@ -7,13 +7,23 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import br.ufpr.agenda.data.dao.PrioridadeDAO
+import br.ufpr.agenda.data.dao.StatusDAO
 import br.ufpr.agenda.data.dao.TarefaDAO
+import br.ufpr.agenda.data.model.PrioridadeModel
+import br.ufpr.agenda.data.model.StatusModel
 
 class MainActivity : AppCompatActivity() {
     lateinit var  listView: ListView
     lateinit var  adapter: ArrayAdapter<String>
     val lista = mutableListOf<String>()
     lateinit var tarefaDAO: TarefaDAO
+    lateinit var prioridadeDAO: PrioridadeDAO
+    lateinit var statusDAO: StatusDAO
+
+    val lista_prioridades = mutableListOf<PrioridadeModel>()
+    val lista_status = mutableListOf<StatusModel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -25,6 +35,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         tarefaDAO = TarefaDAO(this)
+        statusDAO = StatusDAO(this)
+        prioridadeDAO = PrioridadeDAO(this)
+
+        lista_prioridades.addAll(prioridadeDAO.findAll())
+        lista_status.addAll(statusDAO.findAll())
 
         tarefaDAO.create(
             br.ufpr.agenda.data.model.TarefaModel(
@@ -51,7 +66,9 @@ class MainActivity : AppCompatActivity() {
             val tarefas = tarefaDAO.find()
 
             for (t in tarefas) {
-                val texto = "${t.titulo} | Status: ${t.id_status} | Prioridade: ${t.id_prioridade}"
+                var status_name = lista_status.find { it.id == t.id_status }?.nome ?: "inválido"
+                var prioridade_name = lista_prioridades.find { it.id == t.id_status }?.nome ?: "inválido"
+                val texto = "${t.titulo} | Status: ${status_name} | Prioridade: ${prioridade_name}"
                 lista.add(texto)
             }
             adapter.notifyDataSetChanged()
