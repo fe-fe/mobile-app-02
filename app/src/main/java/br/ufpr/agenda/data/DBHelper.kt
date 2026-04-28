@@ -23,9 +23,9 @@ class DBHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, null,
             )
         """.trimIndent())
         // criar entradas de status
-        db.execSQL("INSERT INTO $STATUS_TABLE VALUES (3, 'pendente')")
-        db.execSQL("INSERT INTO $STATUS_TABLE VALUES (2, 'andamento')")
-        db.execSQL("INSERT INTO $STATUS_TABLE VALUES (1, 'concluído')")
+        db.execSQL("INSERT INTO $STATUS_TABLE (peso, nome) VALUES (3, 'pendente')")
+        db.execSQL("INSERT INTO $STATUS_TABLE (peso, nome) VALUES (2, 'andamento')")
+        db.execSQL("INSERT INTO $STATUS_TABLE (peso, nome) VALUES (1, 'concluído')")
 
         // criar tabela de prioridade
         db.execSQL("""
@@ -36,9 +36,9 @@ class DBHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, null,
             )
         """.trimIndent())
         // inserir entradas de prioridade
-        db.execSQL("INSERT INTO $PRIORIDADE_TABLE VALUES (1, 'baixa')")
-        db.execSQL("INSERT INTO $PRIORIDADE_TABLE VALUES (2, 'média')")
-        db.execSQL("INSERT INTO $PRIORIDADE_TABLE VALUES (3, 'alta')")
+        db.execSQL("INSERT INTO $PRIORIDADE_TABLE (peso, nome) VALUES (1, 'baixa')")
+        db.execSQL("INSERT INTO $PRIORIDADE_TABLE (peso, nome) VALUES (2, 'média')")
+        db.execSQL("INSERT INTO $PRIORIDADE_TABLE (peso, nome) VALUES (3, 'alta')")
 
         // criar tabela de tarefas
         val createTarefasTable = """
@@ -46,18 +46,24 @@ class DBHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, null,
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 titulo TEXT,
                 descricao TEXT,
-                id_prioridade INTEGER,
-                id_status INTEGER,
-                FOREIGN KEY (fk_status_id) REFERENCES status(id),
-                FOREIGN KEY (fk_prioridade_id) REFERENCES prioridade(id)
+                id_prioridade INTEGER DEFAULT 1,
+                id_status INTEGER DEFAULT 1,
+                FOREIGN KEY (id_status) REFERENCES status(id),
+                FOREIGN KEY (id_prioridade) REFERENCES prioridade(id)
             )
         """.trimIndent()
         db.execSQL(createTarefasTable)
     }
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+        db.execSQL("DROP TABLE IF EXISTS $TAREFAS_TABLE")
         db.execSQL("DROP TABLE IF EXISTS $STATUS_TABLE")
         db.execSQL("DROP TABLE IF EXISTS $PRIORIDADE_TABLE")
-        db.execSQL("DROP TABLE IF EXISTS $TAREFAS_TABLE")
+        onCreate(db)
+    }
+
+    override fun onConfigure(db: SQLiteDatabase) {
+        super.onConfigure(db)
+        db.setForeignKeyConstraintsEnabled(true)
     }
 
 }

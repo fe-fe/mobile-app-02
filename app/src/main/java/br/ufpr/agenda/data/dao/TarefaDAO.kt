@@ -11,6 +11,11 @@ class TarefaDAO (private val context: Context) {
     private val dbHelper = DBHelper(context)
 
     fun create(tarefa: TarefaModel): Long {
+
+        if (tarefa.titulo.isBlank()) {
+            return 0
+        }
+
         val db = dbHelper.writableDatabase
         val values = ContentValues().apply {
             put("titulo", tarefa.titulo)
@@ -24,11 +29,10 @@ class TarefaDAO (private val context: Context) {
     }
 
     fun update(tarefa: TarefaModel): Int {
-        val db = dbHelper.writableDatabase
-
         if (tarefa.id == 0) {
             return 0
         }
+        val db = dbHelper.writableDatabase
 
         val values = ContentValues().apply {
             put("titulo", tarefa.titulo)
@@ -47,6 +51,9 @@ class TarefaDAO (private val context: Context) {
     }
 
     fun findById(id: Int): TarefaModel? {
+        if (id == 0) {
+            return null
+        }
         val db = dbHelper.readableDatabase
         val cursor = db.query(
             DBHelper.TAREFAS_TABLE,
@@ -77,8 +84,7 @@ class TarefaDAO (private val context: Context) {
         val args = mutableListOf<String>()
         var where: String?
 
-
-        if (titulo != null) {
+        if (!titulo.isNullOrBlank()) {
             conditions.add("titulo LIKE ?")
             args.add("%$titulo%")
         }
@@ -126,12 +132,10 @@ class TarefaDAO (private val context: Context) {
     }
 
     fun delete(id: Int): Int {
-        val db = dbHelper.writableDatabase
-
         if (id == 0) {
             return 0
         }
-
+        val db = dbHelper.writableDatabase
         val rowsDeleted = db.delete(
             DBHelper.TAREFAS_TABLE,
             "id=?",
